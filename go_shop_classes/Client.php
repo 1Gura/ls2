@@ -1,5 +1,5 @@
 <?php
-
+require_once 'go_shop_classes/HasMoney.php';
 
 class Client implements HasMoney
 {
@@ -18,7 +18,9 @@ class Client implements HasMoney
 
     public function buyProduct(Product $product)
     {
-        $this->canBuyProduct($product) ?? $this->money - $product->getPrice();
+        if ($this->canBuyProduct($product)) {
+            $this->money = $this->money - $product->getPrice();
+        }
     }
 
     public function getBoughtProduct(Product $product)

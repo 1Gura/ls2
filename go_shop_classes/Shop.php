@@ -1,5 +1,5 @@
 <?php
-
+require_once 'go_shop_classes/HasMoney.php';
 
 class Shop implements HasMoney
 {
@@ -11,10 +11,13 @@ class Shop implements HasMoney
         $this->products[] = $product;
     }
 
-    public function getProductsSortedByPrice(): array
+    public function getProductsSortedByPrice()
     {
-        usort($this->products, '$this->sortPrice');
-        return $this->products;
+        if (count($this->products) > 0) {
+            usort($this->products, 'sortPrice');
+            return $this->products;
+        }
+        return false;
     }
 
     public function sellTheMostExpensiveProduct(Client $client)
@@ -29,18 +32,14 @@ class Shop implements HasMoney
 
     }
 
-    private function sellProduct(Product $product)
+    public function sellProduct(Product $product)
     {
         foreach ($this->products as $key => $item) {
             if ($item->getName() === $product->getName()) {
+                $this->money += $product->getPrice();
                 unset($this->products[$key]);
             }
         }
-    }
-
-    function sortPrice(Product $a, Product $b): int
-    {
-        return $a->getPrice() <=> $b->getPrice();
     }
 
 
@@ -48,4 +47,9 @@ class Shop implements HasMoney
     {
         return $this->money;
     }
+}
+
+function sortPrice(Product $a, Product $b): int
+{
+    return $a->getPrice() <=> $b->getPrice();
 }

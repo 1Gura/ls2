@@ -3,5 +3,5 @@
 
 interface HasMoney
 {
- public function getMoney():int;
+    public function getMoney(): int;
 }

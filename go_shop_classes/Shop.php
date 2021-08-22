@@ -11,13 +11,10 @@ class Shop implements HasMoney
         $this->products[] = $product;
     }
 
-    public function getProductsSortedByPrice()
+    public function getProductsSortedByPrice(): array
     {
-        if (count($this->products) > 0) {
-            usort($this->products, 'sortPrice');
-            return $this->products;
-        }
-        return false;
+        usort($this->products, 'sortPrice');
+        return $this->products;
     }
 
     public function sellTheMostExpensiveProduct(Client $client)

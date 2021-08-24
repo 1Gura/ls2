@@ -15,14 +15,12 @@ $shop->getProductsSortedByPrice();
 
 foreach ($clients as $key => $client) {
     echo "Клиент $key встал в очередь, у него было денег: {$client->getMoney()} </br>";
-    $product = $shop->getProductsSortedByPrice()[0];
-    var_dump($product->getName());
-    if ($client->canBuyProduct($product)) {
-        $shop->sellProduct($product);
-        $client->buyProduct($product);
-        echo "Клиент $key купил товар {$product->getName()} за {$product->getPrice()}. У него осталось денег {$client->getMoney()} </br></br>";
+    $shop->sellTheMostExpensiveProduct($client);
+    $clientProduct = $client->getBoughtProduct();
+    if ($clientProduct) {
+        echo "Клиент $key купил товар {$clientProduct->getName()} за {$clientProduct->getPrice()}. У него осталось денег {$client->getMoney()} </br></br>";
     } else {
-        echo "Клиент ничего не купил. У него осталось денег {$client->getMoney()}";
+        echo "Клиент ничего не купил. У него осталось денег {$client->getMoney()}</br></br>";
     }
 }
 

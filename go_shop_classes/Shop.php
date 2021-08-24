@@ -13,20 +13,32 @@ class Shop implements HasMoney
 
     public function getProductsSortedByPrice(): array
     {
-        usort($this->products, 'sortPrice');
+        usort($this->products, function (Product $a, Product $b) {
+            return $a->getPrice() <=> $b->getPrice();
+        });
         return $this->products;
     }
 
     public function sellTheMostExpensiveProduct(Client $client)
     {
-        $countProduct = count($this->products);
-        $maxPriceProduct = $this->getProductsSortedByPrice()[$countProduct - 1];
-        if ($client->canBuyProduct($maxPriceProduct)) {
-            $this->sellProduct($maxPriceProduct);
-            $client->buyProduct($maxPriceProduct);
+        $productsBuyerCanBuy = $this->products;
+        $this->products = [];
+
+        foreach ($productsBuyerCanBuy as $product) {
+            if($product->getPrice() <= $client->getMoney()) {
+                $this->products[] = $product;
+            }
         }
-
-
+        $countProduct = count($this->products);
+        if($countProduct > 0) {
+            $maxPriceProduct = $this->getProductsSortedByPrice()[$countProduct - 1];
+            if ($client->canBuyProduct($maxPriceProduct)) {
+                $this->sellProduct($maxPriceProduct);
+                $client->buyProduct($maxPriceProduct);
+                $client->getBoughtProduct($maxPriceProduct);
+            };
+        }
+        $this->products = $productsBuyerCanBuy;
     }
 
     public function sellProduct(Product $product)
@@ -46,7 +58,3 @@ class Shop implements HasMoney
     }
 }
 
-function sortPrice(Product $a, Product $b): int
-{
-    return $a->getPrice() <=> $b->getPrice();
-}

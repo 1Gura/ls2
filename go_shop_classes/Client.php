@@ -20,16 +20,18 @@ class Client implements HasMoney
     {
         if ($this->canBuyProduct($product)) {
             $this->money = $this->money - $product->getPrice();
+            $this->product = $product;
         }
     }
 
-    public function getBoughtProduct(Product $product)
+    public function getBoughtProduct(): ?Product
     {
-        $this->product = $product;
+        return $this->product;
     }
 
     public function getMoney(): int
     {
         return $this->money;
     }
+
 }

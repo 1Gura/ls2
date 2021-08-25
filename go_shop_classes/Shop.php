@@ -21,24 +21,14 @@ class Shop implements HasMoney
 
     public function sellTheMostExpensiveProduct(Client $client)
     {
-        $productsBuyerCanBuy = $this->products;
-        $this->products = [];
-
+        $productsBuyerCanBuy = array_reverse($this->getProductsSortedByPrice());
         foreach ($productsBuyerCanBuy as $product) {
-            if($product->getPrice() <= $client->getMoney()) {
-                $this->products[] = $product;
+            if($client->canBuyProduct($product)) {
+                $this->sellProduct($product);
+                $client->buyProduct($product);
+                break;
             }
         }
-        $countProduct = count($this->products);
-        if($countProduct > 0) {
-            $maxPriceProduct = $this->getProductsSortedByPrice()[$countProduct - 1];
-            if ($client->canBuyProduct($maxPriceProduct)) {
-                $this->sellProduct($maxPriceProduct);
-                $client->buyProduct($maxPriceProduct);
-                $client->getBoughtProduct($maxPriceProduct);
-            };
-        }
-        $this->products = $productsBuyerCanBuy;
     }
 
     public function sellProduct(Product $product)
